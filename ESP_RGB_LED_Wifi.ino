@@ -1,4 +1,7 @@
 #include "webServerManager.h"
+#include "LedRgbManager.h"
+
+LedRgbManager rgbLedManager = LedRgbManager() ;
 
 //Gestion des routes:
 void initRootUrls() {
@@ -8,11 +11,12 @@ void initRootUrls() {
   server.on(URL_GET_API_VERSION, handleRootApiVersion);
   server.onNotFound(handleNotFound);
 
-  
+  // LED RGB
+  server.on(URL_POST_COLOR_LIGHT, std::bind(&LedRgbManager::handleColorLedRgb, rgbLedManager));
 }
 
 void setup() {
-  
+
   // on ouvre le port pour afficher des informations sur la console
   Serial.begin(SERIAL_MONITOR_BAUD);
   // on se connecte au wifi
@@ -35,6 +39,9 @@ void setup() {
   // On démarre le serveur
   server.begin();
   Serial.println("HTTP server started");
+
+  // on configure la led rgb
+  rgbLedManager.initManager();
 }
 
 void loop() {
